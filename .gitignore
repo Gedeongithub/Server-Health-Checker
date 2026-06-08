@@ -1,0 +1,13 @@
+# environment variables
+.env
+
+# virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# logs
+*.log
