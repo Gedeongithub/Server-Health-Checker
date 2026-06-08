@@ -1,72 +1,81 @@
 # Server Health Checker
 
-A simple Python tool that checks the health of multiple servers and services by sending HTTP requests and analyzing their responses.
-
-## Features
-
-- Load server URLs from:
-  - Environment variables (`.env`)
-  - JSON configuration file
-- Send HTTP GET requests to services
-- Measure response time
-- Detect healthy and unhealthy services
-- Validate JSON responses
-- Detect slow services
-- Run checks in parallel
-- Retry failed requests
-- Log execution details
-- Generate a summary of failed services
+A lightweight Python monitoring tool that checks the health of multiple servers in parallel, validates responses, detects slow services, and generates clean reports with logging.
 
 ---
 
-## Project Structure
+# Features
 
-```text
-server_health_checker/
+- Load servers from `.env` or `config/servers.json`
+- Parallel health checks (fast execution)
+- HTTP status validation
+- Response time measurement
+- JSON body validation (`{"status": "ok"}`)
+- Slow service detection (>500ms)
+- Retry-ready architecture
+- Clean reporting system
+- Per-run logging system
+- Failed service tracking
+
+---
+
+# Project Structure
+
+```
+server-health-checker/
+│
+├── main.py
+│
+├── .env
+├── requirements.txt
+│
+├── logs/
+│   └── run_YYYY-MM-DD_HH-MM-SS.log
+│
+├── core/
+│   ├── checker.py
+│   ├── reporter.py
+│
+├── utils/
+│   ├── logger.py
+│   ├── config_loader.py
 │
 ├── config/
 │   └── servers.json
 │
-├── logs/
-│
-├── utils/
-│   ├── config_loader.py
-│   ├── logger.py
-│   └── formatter.py
-│
-├── health_checker.py
-├── main.py
-├── .env
-├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## Installation
+# Installation
 
-### 1. Clone the repository
+## 1. Clone project
 
 ```bash
 git clone https://github.com/Gedeongithub/Server-Health-Checker.git
-cd server_health_checker
+cd server-health-checker
 ```
 
-### 2. Create a virtual environment
+---
+
+## 2. Create virtual environment
 
 ```bash
 py -m venv .venv
 ```
 
-### 3. Activate the virtual environment
+---
 
-**Windows PowerShell**
+## 3. Activate environment
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-### 4. Install dependencies
+---
+
+## 4. Install dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -74,90 +83,113 @@ pip install -r requirements.txt
 
 ---
 
-## Configuration
+# Configuration
 
-### Option 1: Environment Variable
-
-Create a `.env` file:
+## Option 1 — `.env`
 
 ```env
 SERVERS=https://httpbin.org/status/200,https://httpbin.org/status/500
 ```
 
-### Option 2: JSON Configuration File
+---
 
-Create `config/servers.json`:
+## Option 2 — JSON config
+
+`config/servers.json`
 
 ```json
 {
   "servers": [
     "https://httpbin.org/status/200",
     "https://httpbin.org/status/500",
-    "https://httpbin.org/delay/2",
-    "https://httpbin.org/json"
+    "https://httpbin.org/json",
+    "https://httpbin.org/delay/2"
   ]
 }
 ```
 
-The application checks the environment variable first and falls back to the JSON file if no environment variable is provided.
+---
+
+Priority:
+1. `.env`
+2. `servers.json`
 
 ---
 
-## Running the Application
+# Run the project
 
 ```bash
 py main.py
 ```
 
-Example output:
+---
 
-```text
-Loaded 4 servers
+# Example Output
 
-https://httpbin.org/status/200  — OK (200)    — 120ms
-https://httpbin.org/status/500  — DOWN (500)
-https://httpbin.org/delay/2     — OK (200)    — 2100ms [slow]
-https://httpbin.org/json        — OK (200)
+```
+https://httpbin.org/status/200   — HEALTHY (200) — 180ms
+https://httpbin.org/status/500   — DOWN (500)
+https://httpbin.org/json         — UNSTABLE (200)
+https://httpbin.org/delay/2      — UNSTABLE (200) — 2100ms  [SLOW]
 
-Failed services:
-https://httpbin.org/status/500
+--- SUMMARY ---
+Failed services: https://httpbin.org/status/500
 ```
 
 ---
 
-## Test Endpoints
+# Logging
 
-The following endpoints can be used during development:
+Every run generates a unique log file:
 
-| Endpoint | Purpose |
-|-----------|----------|
-| https://httpbin.org/status/200 | Healthy service |
-| https://httpbin.org/status/500 | Failing service |
-| https://httpbin.org/delay/2 | Slow service |
-| https://httpbin.org/json | JSON response |
+```
+logs/run_2026-06-08_15-30-22.log
+```
+
+Logs include:
+
+- server checks
+- slow services
+- errors
+- execution flow
 
 ---
 
-## Logging
+# Architecture Flow
 
-Execution logs are stored in:
-
-```text
-logs/health_checker.log
 ```
-
-Example:
-
-```text
-INFO Loaded 4 servers
-INFO Checking https://httpbin.org/status/200
-WARNING Slow response detected
-ERROR Request failed
+main.py
+   ↓
+config_loader.py   → Load servers
+   ↓
+checker.py         → Parallel health checks
+   ↓
+reporter.py        → Format output
+   ↓
+logger.py          → Log everything
 ```
 
 ---
 
-## Author
+# Performance
+
+- Uses ThreadPoolExecutor
+- Runs all servers concurrently
+- Suitable for 10–100+ endpoints
+
+---
+
+# Future Improvements
+
+- Retry failed requests
+- Slack/email alerts
+- Dashboard (FastAPI / Streamlit)
+- Docker support
+- Scheduled monitoring (cron job)
+
+---
+
+# Author
 
 Gedeon Dufitimana  
-Software Tester | Python Automation Enthusiast
+Software Tester | Python Automation Engineer

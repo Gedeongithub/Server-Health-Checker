@@ -1,16 +1,10 @@
-from utils.logger import get_logger
+from core.checker import check_all_servers
+from core.reporter import generate_report
 
-
-# =====================================================
-# TO BE REMOVED, JUST FOR TESTING IF LOGGER IS WORKING
-# =====================================================
 
 def main():
-    logger = get_logger()
-
-    logger.info("Server check started")
-    logger.warning("Slow service detected")
-    logger.error("Service down")
+    results = check_all_servers()
+    generate_report(results)
 
 
 if __name__ == "__main__":
