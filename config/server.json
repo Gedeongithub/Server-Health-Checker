@@ -1,0 +1,7 @@
+{
+  "servers": [
+    "https://httpbin.org/status/200",
+    "https://httpbin.org/json",
+    "https://httpbin.org/delay/2"
+  ]
+}
