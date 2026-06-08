@@ -53,7 +53,7 @@ server-health-checker/
 ## 1. Clone project
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/Gedeongithub/Server-Health-Checker.git
 cd server-health-checker
 ```
 
